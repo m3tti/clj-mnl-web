@@ -2,6 +2,7 @@
   (:require
    [hiccup2.core :as h]
    [utils.session :as s]
+   [clojure.java.io :as io]
    [ring.middleware.anti-forgery :as af]
    [squint.compiler :as squint]))
 
@@ -16,7 +17,13 @@
    :body))
 
 (defn cljs-resource [filename]
-  (->js (slurp (io/resource (str "cljs/" filename ".cljs")))))
+  [:script
+   (->
+    (str "cljs/" filename ".cljs")
+    io/resource
+    slurp
+    ->js
+    h/raw)])
 
 (defn navbar [req]
   (let [user (s/current-user req)]
