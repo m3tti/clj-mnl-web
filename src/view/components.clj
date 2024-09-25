@@ -5,6 +5,19 @@
    [ring.middleware.anti-forgery :as af]
    [squint.compiler :as squint]))
 
+(defn csrf-token []
+  [:input {:type "hidden"
+           :name "__anti-forgery-token"
+           :value af/*anti-forgery-token*}])
+
+(defn ->js [form]
+  (->>
+   (squint/compile-string* (str form))
+   :body))
+
+(defn cljs-resource [filename]
+  (->js (slurp (io/resource (str "cljs/" filename ".cljs")))))
+
 (defn navbar [req]
   (let [user (s/current-user req)]
     [:nav.navbar.sticky-top.navbar-expand-lg.navbar-bg-body-tertiary
@@ -46,7 +59,8 @@
          [:link {:href "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
                  :rel "stylesheet"
                  :integrity "sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-                 :crossorigin "anonymous"}]]
+                 :crossorigin "anonymous"}]
+         (cljs-resource "helloworld")]
         [:body
          (navbar req)
          (alert req)
@@ -54,13 +68,3 @@
          [:script {:src "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                    :integrity "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                    :crossorigin "anonymous"}]]])))
-
-(defn csrf-token []
-  [:input {:type "hidden"
-           :name "__anti-forgery-token"
-           :value af/*anti-forgery-token*}])
-
-(defn ->js [form]
-  (->>
-   (squint/compile-string* (str form))
-   :body))
