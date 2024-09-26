@@ -7,7 +7,7 @@
    [squint.compiler :as squint]
    [cheshire.core :as json]))
 
-(def squint-cdn-path "https://cdn.jsdelivr.net/npm/squint-cljs@0.4.81")
+(def squint-cdn-path "https://cdn.jsdelivr.net/npm/squint-cljs@0.8.114")
 
 (defn csrf-token []
   [:input {:type "hidden"
