@@ -4,7 +4,7 @@
    [utils.encryption :as enc]))
 
 (defn by-id [id]
-  (db/find-by-keys "users" {:id id}))
+  (first (db/find-by-keys "users" {:id id})))
 
 (defn by-email [email]
   (db/find-by-keys "users" {:email email}))
