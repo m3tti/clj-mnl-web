@@ -4,21 +4,21 @@
    [utils.encryption :as enc]))
 
 (defn by-id [id]
-  (db/execute-one! ["select * from users where id = ?" id]))
+  (db/find-by-keys "users" {:id id}))
 
 (defn by-email [email]
-  (db/execute-one! ["select * from users where email = ?" email]))
+  (db/find-by-keys "users" {:email email}))
 
 (defn all []
   (db/execute! ["select * from users"]))
 
-(defn delete [id]
-  (db/execute! ["delete from users where id = ?" id]))
+(defn delete! [id]
+  (db/delete! "users" {:id id}))
 
 (defn insert [{:keys [email password]}]
-  (db/execute-one!
-   ["insert into users(email, password) values (?,?)"
-    email (enc/hash-password password)]))
+  (db/insert! "users"
+              {:email email
+               :password (enc/hash-password password)}))
 
 (defn correct-password? [email password]
   (let [user (by-email email)]
@@ -29,3 +29,4 @@
 (comment (correct-password? "hans@wursde" "test"))
 (comment (insert {:email "hans@wurst.de" :password "test"}))
 (comment (all))
+(comment (by-id 1))
