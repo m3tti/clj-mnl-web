@@ -91,12 +91,14 @@
               :squint-cljs/src/squint/string.js (str squint-cdn-path "/src/squint/string.js")
               :squint-cljs/src/squint/set.js (str squint-cdn-path "/src/squint/set.js")
               :squint-cljs/src/squint/html.js (str squint-cdn-path "/src/squint/html.js")}}))]
-         (cljs-module "helloworld")]
+         (cljs-module "helloworld")
+         (cljs-module "web-component")]
         [:body
          (navbar req)
          (alert req)
          body
          [:div#cljs]
+         [:x-greeting {:name "Wurst"}]
          [:script {:src "/static/js/bootstrap.bundle.min.js"
                    :integrity "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                    :crossorigin "anonymous"}]]])))
