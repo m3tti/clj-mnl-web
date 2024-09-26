@@ -4,7 +4,10 @@
    [utils.session :as s]
    [clojure.java.io :as io]
    [ring.middleware.anti-forgery :as af]
-   [squint.compiler :as squint]))
+   [squint.compiler :as squint]
+   [cheshire.core :as json]))
+
+(def squint-cdn-path "https://cdn.jsdelivr.net/npm/squint-cljs@0.4.81")
 
 (defn csrf-token []
   [:input {:type "hidden"
@@ -15,6 +18,18 @@
   (->>
    (squint/compile-string* (str form))
    :body))
+
+(defn compile-jsx [src]
+  (squint/compile-string src {:jsx-runtime {:import-source "https://esm.sh/preact@10.19.2"}}))
+
+(defn cljs-module [filename]
+  [:script {:type "module"}
+   (->
+    (str "cljs/" filename ".cljs")
+    io/resource
+    slurp
+    compile-jsx
+    h/raw)])
 
 (defn cljs-resource [filename]
   [:script
@@ -63,15 +78,25 @@
    (h/html
        [:html
         [:head
-         [:link {:href "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+         [:link {:href "/static/css/bootstrap.min.css"
                  :rel "stylesheet"
                  :integrity "sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
                  :crossorigin "anonymous"}]
-         (cljs-resource "helloworld")]
+         [:script {:type "importmap"}
+          (h/raw
+           (json/encode 
+            {:imports
+             {:squint-cljs/core.js (str squint-cdn-path "/src/squint/core.js")
+              :squint-cljs/string.js (str squint-cdn-path "/src/squint/string.js")
+              :squint-cljs/src/squint/string.js (str squint-cdn-path "/src/squint/string.js")
+              :squint-cljs/src/squint/set.js (str squint-cdn-path "/src/squint/set.js")
+              :squint-cljs/src/squint/html.js (str squint-cdn-path "/src/squint/html.js")}}))]
+         (cljs-module "helloworld")]
         [:body
          (navbar req)
          (alert req)
          body
-         [:script {:src "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+         [:div#cljs]
+         [:script {:src "/static/js/bootstrap.bundle.min.js"
                    :integrity "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                    :crossorigin "anonymous"}]]])))
