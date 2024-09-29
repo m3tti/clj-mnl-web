@@ -1,3 +1,5 @@
+# Discontinued in favour of [borkweb](https://github.com/m3tti/borkweb)
+
 # clj-mnl-web
 Is a small web template with as little dependencies as possible to get you of the ground fast. It supports a structure for your next web app and integrates a simple user login and register form.
 
@@ -7,4 +9,3 @@ Is a small web template with as little dependencies as possible to get you of th
 - [next.jdbc (postgres)](https://github.com/seancorfield/next-jdbc)
 - [ring](https://github.com/ring-clojure/ring)
 - [hiccup](https://github.com/weavejester/hiccup)
-
